@@ -528,6 +528,61 @@ geometry_msgs::PoseWithCovarianceStamped TagDetector::makeTagPose(
   return pose;
 }
 
+AprilTagCornersArray TagDetector::getCorners(const cv_bridge::CvImagePtr& image){
+  
+  AprilTagCornersArray corners_array;
+
+  corners_array.header = image->header;
+
+  for (int i = 0; i < zarray_size(detections_); i++)
+  {
+    apriltag_detection_t *det;
+    zarray_get(detections_, i, &det);
+
+    // Check if this ID is present in config/tags.yaml
+    // Check if is part of a tag bundle
+    int tagID = det->id;
+    bool is_part_of_bundle = false;
+    for (unsigned int j=0; j<tag_bundle_descriptions_.size(); j++)
+    {
+      TagBundleDescription bundle = tag_bundle_descriptions_[j];
+      if (bundle.id2idx_.find(tagID) != bundle.id2idx_.end())
+      {
+        is_part_of_bundle = true;
+        break;
+      }
+    }
+    // If not part of a bundle, check if defined as a standalone tag
+    StandaloneTagDescription* standaloneDescription;
+    if (!is_part_of_bundle &&
+        !findStandaloneTagDescription(tagID, standaloneDescription, false))
+    {
+      // Neither a standalone tag nor part of a bundle, so this is a "rogue"
+      // tag, skip it.
+      continue;
+    }
+
+    AprilTagCorners corners;
+
+    auto corner = [=](int index){
+      geometry_msgs::Point p;
+      p.x = det->p[index][0];
+      p.y = det->p[index][1];
+      return p;
+    };
+
+    corners.id = tagID;
+    corners.bottom_left = corner(0);
+    corners.bottom_right = corner(1);
+    corners.top_right = corner(2);
+    corners.top_left = corner(3);
+
+    corners_array.corners.push_back(corners);
+  }
+
+  return corners_array;
+}
+
 void TagDetector::drawDetections (cv_bridge::CvImagePtr image)
 {
   for (int i = 0; i < zarray_size(detections_); i++)

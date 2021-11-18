@@ -30,6 +30,8 @@
  */
 
 #include "apriltag_ros/continuous_detector.h"
+#include "apriltag_ros/AprilTagCorners.h"
+#include "apriltag_ros/AprilTagCornersArray.h"
 
 #include <pluginlib/class_list_macros.h>
 
@@ -57,6 +59,8 @@ void ContinuousDetector::onInit ()
                           image_transport::TransportHints(transport_hint));
   tag_detections_publisher_ =
       nh.advertise<AprilTagDetectionArray>("tag_detections", 1);
+  tag_corners_publisher_ =
+      nh.advertise<AprilTagCornersArray>("tag_corners", 1);    
   if (draw_tag_detections_image_)
   {
     tag_detections_image_publisher_ = it_->advertise("tag_detections_image", 1);
@@ -93,6 +97,9 @@ void ContinuousDetector::imageCallback (
   // Publish detected tags in the image by AprilTag 2
   tag_detections_publisher_.publish(
       tag_detector_->detectTags(cv_image_,camera_info));
+
+  // Publish Corners
+  tag_corners_publisher_.publish(tag_detector_->getCorners(cv_image_));
 
   // Publish the camera image overlaid by outlines of the detected tags and
   // their payload values

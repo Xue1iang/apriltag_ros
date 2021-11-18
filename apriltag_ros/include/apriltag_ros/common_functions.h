@@ -66,6 +66,9 @@
 
 #include "apriltag_ros/AprilTagDetection.h"
 #include "apriltag_ros/AprilTagDetectionArray.h"
+#include "geometry_msgs/Point.h"
+#include "apriltag_ros/AprilTagCorners.h"
+#include "apriltag_ros/AprilTagCornersArray.h"
 
 namespace apriltag_ros
 {
@@ -231,6 +234,8 @@ class TagDetector
                       std::vector<cv::Point2d >& imagePoints) const;
   void addObjectPoints(double s, cv::Matx44d T_oi,
                        std::vector<cv::Point3d >& objectPoints) const;
+
+  AprilTagCornersArray getCorners(const cv_bridge::CvImagePtr& image);
 
   // Draw the detected tags' outlines and payload values on the image
   void drawDetections(cv_bridge::CvImagePtr image);
