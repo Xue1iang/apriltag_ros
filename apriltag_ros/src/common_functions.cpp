@@ -576,6 +576,8 @@ AprilTagCornersArray TagDetector::getCorners(const cv_bridge::CvImagePtr& image)
     corners.bottom_right = corner(1);
     corners.top_right = corner(2);
     corners.top_left = corner(3);
+    corners.centre.x = det->c[0];
+    corners.centre.y = det->c[1];
 
     corners_array.corners.push_back(corners);
   }
