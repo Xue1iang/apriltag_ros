@@ -203,7 +203,7 @@ TagDetector::~TagDetector() {
   }
 }
 
-AprilTagDetectionArray TagDetector::detectTags (
+std::pair<AprilTagDetectionArray,AprilTagDetectionRawArray> TagDetector::detectTags (
     const cv_bridge::CvImagePtr& image,
     const sensor_msgs::CameraInfoConstPtr& camera_info) {
   // Convert image to AprilTag code's format
@@ -251,8 +251,10 @@ AprilTagDetectionArray TagDetector::detectTags (
   // Compute the estimated translation and rotation individually for each
   // detected tag
   AprilTagDetectionArray tag_detection_array;
+  AprilTagDetectionRawArray tag_detection_raw_array;
   std::vector<std::string > detection_names;
   tag_detection_array.header = image->header;
+  tag_detection_raw_array.header = image->header;
   std::map<std::string, std::vector<cv::Point3d > > bundleObjectPoints;
   std::map<std::string, std::vector<cv::Point2d > > bundleImagePoints;
   for (int i=0; i < zarray_size(detections_); i++)
@@ -267,6 +269,28 @@ AprilTagDetectionArray TagDetector::detectTags (
     // Don't yet run cv::solvePnP on the bundles, though, since we're still in
     // the process of collecting all the object-image corresponding points
     int tagID = detection->id;
+
+    // create detection raw
+    AprilTagDetectionRaw tag_detection_raw;
+    tag_detection_raw.id = tagID;
+    tag_detection_raw.hamming = detection->hamming;
+
+    auto corner = [=](int index){
+      geometry_msgs::Point p;
+      p.x = detection->p[index][0];
+      p.y = detection->p[index][1];
+      return p;
+    };
+
+    tag_detection_raw.corners.bottom_left = corner(0);
+    tag_detection_raw.corners.bottom_right = corner(1);
+    tag_detection_raw.corners.top_right = corner(2);
+    tag_detection_raw.corners.top_left = corner(3);
+    tag_detection_raw.corners.centre.x = detection->c[0];
+    tag_detection_raw.corners.centre.y = detection->c[1];
+
+    tag_detection_raw_array.detections.push_back(tag_detection_raw);
+
     bool is_part_of_bundle = false;
     for (unsigned int j=0; j<tag_bundle_descriptions_.size(); j++)
     {
@@ -399,7 +423,7 @@ AprilTagDetectionArray TagDetector::detectTags (
     }
   }
 
-  return tag_detection_array;
+  return std::make_pair(tag_detection_array,tag_detection_raw_array);
 }
 
 int TagDetector::idComparison (const void* first, const void* second)
@@ -530,6 +554,63 @@ geometry_msgs::PoseWithCovarianceStamped TagDetector::makeTagPose(
   pose.pose.pose.orientation.w = rot_quaternion.w();
   return pose;
 }
+
+// AprilTagCornersArray TagDetector::getCorners(const cv_bridge::CvImagePtr& image){
+  
+//   AprilTagCornersArray corners_array;
+
+//   corners_array.header = image->header;
+
+//   for (int i = 0; i < zarray_size(detections_); i++)
+//   {
+//     apriltag_detection_t *det;
+//     zarray_get(detections_, i, &det);
+
+//     // Check if this ID is present in config/tags.yaml
+//     // Check if is part of a tag bundle
+//     int tagID = det->id;
+//     bool is_part_of_bundle = false;
+//     for (unsigned int j=0; j<tag_bundle_descriptions_.size(); j++)
+//     {
+//       TagBundleDescription bundle = tag_bundle_descriptions_[j];
+//       if (bundle.id2idx_.find(tagID) != bundle.id2idx_.end())
+//       {
+//         is_part_of_bundle = true;
+//         break;
+//       }
+//     }
+//     // If not part of a bundle, check if defined as a standalone tag
+//     StandaloneTagDescription* standaloneDescription;
+//     if (!is_part_of_bundle &&
+//         !findStandaloneTagDescription(tagID, standaloneDescription, false))
+//     {
+//       // Neither a standalone tag nor part of a bundle, so this is a "rogue"
+//       // tag, skip it.
+//       continue;
+//     }
+
+//     AprilTagCorners corners;
+
+//     auto corner = [=](int index){
+//       geometry_msgs::Point p;
+//       p.x = det->p[index][0];
+//       p.y = det->p[index][1];
+//       return p;
+//     };
+
+//     corners.id = tagID;
+//     corners.bottom_left = corner(0);
+//     corners.bottom_right = corner(1);
+//     corners.top_right = corner(2);
+//     corners.top_left = corner(3);
+//     corners.centre.x = det->c[0];
+//     corners.centre.y = det->c[1];
+
+//     corners_array.corners.push_back(corners);
+//   }
+
+//   return corners_array;
+// }
 
 void TagDetector::drawDetections (cv_bridge::CvImagePtr image)
 {

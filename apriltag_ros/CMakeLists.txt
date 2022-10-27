@@ -51,6 +51,9 @@ add_message_files(
   FILES
   AprilTagDetection.msg
   AprilTagDetectionArray.msg
+  AprilTagCorners.msg
+  AprilTagDetectionRaw.msg
+  AprilTagDetectionRawArray.msg
 )
 
 add_service_files(
@@ -68,6 +71,7 @@ generate_messages(
 # Extract the include directories and libraries from apriltag::apriltag as catkin_package() does not support modern cmake.
 get_target_property(apriltag_INCLUDE_DIRS apriltag::apriltag INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(apriltag_LIBRARIES apriltag::apriltag INTERFACE_LINK_LIBRARIES)
+
 
 catkin_package(
   INCLUDE_DIRS

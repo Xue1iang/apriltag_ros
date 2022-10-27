@@ -48,6 +48,7 @@
 #include <sstream>
 #include <vector>
 #include <map>
+#include <utility>
 
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -66,6 +67,10 @@
 
 #include "apriltag_ros/AprilTagDetection.h"
 #include "apriltag_ros/AprilTagDetectionArray.h"
+#include "geometry_msgs/Point.h"
+#include "apriltag_ros/AprilTagCorners.h"
+#include "apriltag_ros/AprilTagDetectionRaw.h"
+#include "apriltag_ros/AprilTagDetectionRawArray.h"
 
 namespace apriltag_ros
 {
@@ -211,7 +216,7 @@ class TagDetector
       const std_msgs::Header& header);
 
   // Detect tags in an image
-  AprilTagDetectionArray detectTags(
+  std::pair<AprilTagDetectionArray,AprilTagDetectionRawArray> detectTags(
       const cv_bridge::CvImagePtr& image,
       const sensor_msgs::CameraInfoConstPtr& camera_info);
 

@@ -57,6 +57,8 @@ void ContinuousDetector::onInit ()
                           image_transport::TransportHints(transport_hint));
   tag_detections_publisher_ =
       nh.advertise<AprilTagDetectionArray>("tag_detections", 1);
+  tag_detections_raw_publisher_ =
+      nh.advertise<AprilTagDetectionRawArray>("tag_detections_raw", 1);    
   if (draw_tag_detections_image_)
   {
     tag_detections_image_publisher_ = it_->advertise("tag_detections_image", 1);
@@ -70,7 +72,7 @@ void ContinuousDetector::imageCallback (
   // Lazy updates:
   // When there are no subscribers _and_ when tf is not published,
   // skip detection.
-  if (tag_detections_publisher_.getNumSubscribers() == 0 &&
+  if (tag_detections_publisher_.getNumSubscribers() == 0 || tag_detections_raw_publisher_.getNumSubscribers() == 0 &&
       tag_detections_image_publisher_.getNumSubscribers() == 0 &&
       !tag_detector_->get_publish_tf())
   {
@@ -90,9 +92,13 @@ void ContinuousDetector::imageCallback (
     return;
   }
 
-  // Publish detected tags in the image by AprilTag 2
-  tag_detections_publisher_.publish(
-      tag_detector_->detectTags(cv_image_,camera_info));
+  // Run Detection
+  auto msgs = tag_detector_->detectTags(cv_image_,camera_info);
+ 
+  tag_detections_publisher_.publish(msgs.first);
+
+  // Publish Raw Detections
+  tag_detections_raw_publisher_.publish(msgs.second);
 
   // Publish the camera image overlaid by outlines of the detected tags and
   // their payload values
