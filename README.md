@@ -1,8 +1,10 @@
-# apriltag_ros
+# UoM Version of apriltag_ros
 
-## UoM Version of apriltag_ros
+This version (in the master branch) operates identically (as of 27/10/22) to the AprilRobotics version except it provides a `/tag_detections_raw` topic with additional data provided by the lower-level apriltag library.
 
-This version operates (as of 27/10/22) identically to the AprilRobotics version except it provides a `/tag_detections_raw` topic with example data (for a single detected tag)
+The `detections` array will contain one entry per detected tag regardless of if the tag is defined as part of a `tag_bundle` or not.
+
+Example `rostopic echo /tag_detections_raw` for an image with a single tag is: 
 ```
 ---
 header: 
@@ -42,6 +44,8 @@ detections:
 ```
 
 Please also note: you do not require to build the Apriltag library alongside this - including the version built for your version of ubuntu is fine!
+
+# apriltag_ros
 
 `apriltag_ros` is a Robot Operating System (ROS) wrapper of the [AprilTag 3 visual fiducial detector](https://april.eecs.umich.edu/software/apriltag.html). For details and tutorials, please see the [ROS wiki](http://wiki.ros.org/apriltag_ros).
 
