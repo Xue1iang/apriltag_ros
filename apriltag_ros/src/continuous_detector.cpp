@@ -72,7 +72,7 @@ void ContinuousDetector::imageCallback (
   // Lazy updates:
   // When there are no subscribers _and_ when tf is not published,
   // skip detection.
-  if (tag_detections_publisher_.getNumSubscribers() == 0 || tag_detections_raw_publisher_.getNumSubscribers() == 0 &&
+  if (tag_detections_publisher_.getNumSubscribers() == 0 && tag_detections_raw_publisher_.getNumSubscribers() == 0 &&
       tag_detections_image_publisher_.getNumSubscribers() == 0 &&
       !tag_detector_->get_publish_tf())
   {

@@ -274,6 +274,7 @@ std::pair<AprilTagDetectionArray,AprilTagDetectionRawArray> TagDetector::detectT
     AprilTagDetectionRaw tag_detection_raw;
     tag_detection_raw.id = tagID;
     tag_detection_raw.hamming = detection->hamming;
+    tag_detection_raw.decision_margin = detection->decision_margin;
 
     auto corner = [=](int index){
       geometry_msgs::Point p;
@@ -286,8 +287,8 @@ std::pair<AprilTagDetectionArray,AprilTagDetectionRawArray> TagDetector::detectT
     tag_detection_raw.corners.bottom_right = corner(1);
     tag_detection_raw.corners.top_right = corner(2);
     tag_detection_raw.corners.top_left = corner(3);
-    tag_detection_raw.corners.centre.x = detection->c[0];
-    tag_detection_raw.corners.centre.y = detection->c[1];
+    tag_detection_raw.centre.x = detection->c[0];
+    tag_detection_raw.centre.y = detection->c[1];
 
     tag_detection_raw_array.detections.push_back(tag_detection_raw);
 
