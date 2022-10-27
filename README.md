@@ -1,5 +1,48 @@
 # apriltag_ros
 
+## UoM Version of apriltag_ros
+
+This version operates (as of 27/10/22) identically to the AprilRobotics version except it provides a `/tag_detections_raw` topic with example data (for a single detected tag)
+```
+---
+header: 
+  seq: 549
+  stamp: 
+    secs: 1666886129
+    nsecs: 781517166
+  frame_id: "usb_cam"
+detections: 
+  - 
+    id: 0
+    hamming: 0
+    decision_margin: 128.75738525390625
+    centre: 
+      x: 804.7934591400975
+      y: 534.2455211672335
+      z: 0.0
+    corners: 
+      top_left: 
+        x: 745.8753662109375
+        y: 495.33493041992193
+        z: 0.0
+      bottom_left: 
+        x: 766.2141723632811
+        y: 589.4982910156251
+        z: 0.0
+      bottom_right: 
+        x: 862.8782348632814
+        y: 572.6057739257812
+        z: 0.0
+      top_right: 
+        x: 841.2420043945315
+        y: 482.04437255859375
+        z: 0.0
+---
+
+```
+
+Please also note: you do not require to build the Apriltag library alongside this - including the version built for your version of ubuntu is fine!
+
 `apriltag_ros` is a Robot Operating System (ROS) wrapper of the [AprilTag 3 visual fiducial detector](https://april.eecs.umich.edu/software/apriltag.html). For details and tutorials, please see the [ROS wiki](http://wiki.ros.org/apriltag_ros).
 
 `apriltag_ros` depends on the latest release of the [AprilTag library](https://github.com/AprilRobotics/apriltag). Clone it into your catkin workspace before building.
