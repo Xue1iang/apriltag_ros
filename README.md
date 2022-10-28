@@ -43,7 +43,9 @@ detections:
 
 ```
 
-Please also note: you do not require to build the Apriltag library alongside this - including the version built for your version of ubuntu is fine!
+Usage is the same as described below except note - you do not generally need to clone the `apriltag` source alongside this version. The `rosdep` install should find a suitable prebuilt binary from the ros/ubuntu repository.
+
+Installatoi
 
 # apriltag_ros
 
@@ -63,7 +65,7 @@ export ROS_DISTRO=melodic               # Set this to your distro, e.g. kinetic 
 source /opt/ros/$ROS_DISTRO/setup.bash  # Source your ROS distro 
 mkdir -p ~/catkin_ws/src                # Make a new workspace 
 cd ~/catkin_ws/src                      # Navigate to the source space
-git clone https://github.com/AprilRobotics/apriltag.git      # Clone Apriltag library
+git clone https://github.com/AprilRobotics/apriltag.git      # Clone Apriltag library *NOT REQUIRED IN MOST CIRCUMSTANCES*
 git clone https://github.com/AprilRobotics/apriltag_ros.git  # Clone Apriltag ROS wrapper
 cd ~/catkin_ws                          # Navigate to the workspace
 rosdep install --from-paths src --ignore-src -r -y  # Install any missing packages
