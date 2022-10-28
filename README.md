@@ -43,9 +43,7 @@ detections:
 
 ```
 
-Usage is the same as described below except note - you do not generally need to clone the `apriltag` source alongside this version. The `rosdep` install should find a suitable prebuilt binary from the ros/ubuntu repository.
-
-Installatoi
+Usage is the same as described below except note - you do not generally need to clone the `apriltag` source alongside this version. The `rosdep install` should find a suitable prebuilt binary from the ros/ubuntu repository.
 
 # apriltag_ros
 
